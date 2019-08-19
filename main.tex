@@ -32,17 +32,33 @@
 % Include a list of keywords after the abstract 
 \keywords{Manuscript format, template, SPIE Proceedings, LaTeX}
 
-\section{INTRODUCTION}
-The \gls{WFIRST} \gls{CGI}\cite{spergel_wide-field_2015,noecker_coronagraph_2016,douglas_wfirst_2018,kasdin_wfirst_2018} will image circumstellar environments, imaging circumstellar disks\cite{schneider_quick_2014,schneider_detection_2016} and giant exoplanets\cite{marley_quick_2014,ygouf_data_2016-1,bailey_lessons_2018}.
+\section{INTRODUCTION}\label{sec:intro}  % \label{} allows reference to this section
 
-Modeling of the sensitivity to exoplanets requires combining telescope and detector parameters with coronagraph performance and target star properties \cite{nemati_sensitivity_2017,savransky_exosims_2018}.
-Detailed modeling of exoplanet imaging coronagraph performance requires end-to-end diffraction modeling. Ruane et al.\cite{ruane_review_2018} reviewed the basic elements of coronagraph design and the publicly available design tools.
+The \gls{WFIRST} \gls{CGI}\cite{spergel_wide-field_2015,noecker_coronagraph_2016} will image circumstellar environments, imaging circumstellar disks\cite{schneider_quick_2014,schneider_detection_2016} and giant exoplanets  \cite{marley_quick_2014,ygouf_data_2016-1,bailey_lessons_2018} at visible wavelengths and extreme ($<<10^{-7}$) flux ratios\cite{douglas_wfirst_2018,kasdin_wfirst_2018}.
+
+Modeling the sensitivity of a system to exoplanets requires combining telescope and detector parameters with coronagraph performance and target star properties \cite{nemati_sensitivity_2017,savransky_exosims_2018}.
+Detailed modeling of exoplanet imaging coronagraph performance requires end-to-end  modeling. Ruane et al.\cite{ruane_review_2018} reviewed the basic elements of coronagraph design and the publicly available design tools.
 The \gls{WFIRST} instrument has been extensively modeled in the PROPER\cite{krist_overview_2015,krist_wfirst_2017,krist_wfirst_2018,zhou_high_2018} and FALCO\cite{riggs_fast_2018,sidick_fast_2018} libraries.
 
+This preliminary work extends those models to small angles from the target star, within the \gls{CGI} \gls{IWA}.
+The \gls{IWA} for CGI is typically defined as the ``field radius from the star at which the PSF core throughput is 50\% of its maximum''\cite{krist_numerical_2015}.
+In our solar system, solar flux and zodiacal dust number density are both decreasing with separation from the Sun\cite{rowan-robinson_improved_2013,kennedy_exo-zodi_2014}; hence, we expect scattered light from exozodiacal dust to peak close to the star. This potentially places a significant source of flux inside the \gls{IWA} but far enough from the central star to be partially resolved.
+
+Since the \gls{PSF} of the star is highly aberrated by the coronagraph near the inner working angle, simulation of images in this region must be field-angle dependent and  convolution of a representative \gls{PSF} will not recover the unique diffraction pattern of compact sources. 
+Examples of the evolution of the \gls{HLC} PSF morphology and brightness as a function of target separation along the horizontal axis are shown if Fig. \ref{fig:psfs}.
 
 
-\label{sec:intro}  % \label{} allows reference to this section
-Exozodiacal dust presents 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.51\textwidth]{0PSF.png}
+    \includegraphics[width=0.49\textwidth]{17PSF_1lambdaD.png}
+    \includegraphics[width=0.49\textwidth]{34PSF_2lambdaD.png}
+    \includegraphics[width=0.49\textwidth]{51PSF.png}
+    \includegraphics[width=0.49\textwidth]{68PSF.png}
+    \caption{\acrshort{HLC} \gls{PSF} including transmission at a different separations. Top: On-axis coronagraph dark hole. Middle row: approx. 1 and 2$\lambda/D$ PSF. Significant flux is transmitted from sources inside the nominal 1.5$\lambda/D$ \acrshort{IWA}. Bottom row: approx. 3 and 4 $\lambda/D$ PSF. }
+    \label{fig:psfs}
+\end{figure}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{flow.png}
@@ -51,24 +67,49 @@ Exozodiacal dust presents
 \end{figure}
 
 
+
+
 \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.95\textwidth]{Unknown-7.png}
-    \caption{Simulation flow for field dependant PSF simulations of debris disks.}
-    \label{fig:my_label}
+    \includegraphics[width=0.95\textwidth]{Unknown-4.png}
+    \caption{Exozodiacal dust simulation assuming all dust is outside the \gls{IWA} }
+    \label{fig:nogap}
     \end{figure}
 
     \begin{figure}[htbp]
-    \includegraphics[width=0.95\textwidth]{Unknown-4.png}
-    \caption{Simulation flow for field dependant PSF simulations of debris disks.}
+
+    \centering
+    \includegraphics[width=0.95\textwidth]{Unknown-7.png}
+    \caption{}
+    \label{fig:gap}
+\end{figure}
+
+
+\section{Methods}
+\label{sec:intro}  % \label{} allows reference to this section
+Fig. \ref{fig:flow} shows our simulation procedure. 
+We generate a simulated dust image in units of Jansky per pixel using Zodipic\cite{kuchner_zodipic_2012} or another simple optically-thin radiative transfer model.
+Each pixel in the input scene is finely sampled, typically on a 3 mas grid.  
+We build a composite image by multiplying the flux in the input pixel by the corresponding PSF array.
+The PSF arrays are sampled from the 1D \gls{HLC} \gls{PSF} grid publicly shared on the IPAC website\footnote{http://wfirst.ipac.caltech.edu}.
+Rotational symmetry is assumed and interpolation is  nearest neighbor since the input grid is finely sampled (3 mas inside 4 $\lambda/D$).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.51\textwidth]{0PSF.png}
+    \includegraphics[width=0.49\textwidth]{17PSF_1lambdaD.png}
+    \includegraphics[width=0.49\textwidth]{34PSF_2lambdaD.png}
+    \includegraphics[width=0.49\textwidth]{51PSF.png}
+    \includegraphics[width=0.49\textwidth]{68PSF.png}
+    \caption{\acrshort{HLC} \gls{PSF} including transmission at a different separations. Top: On-axis coronagraph dark hole. Middle row: approx. 1 and 2$\lambda/D$ PSF. Bottom row: approx. 3 and 4 $\lambda/D$ PSF.}
     \label{fig:my_label}
 \end{figure}
-\section{Methods}
-
-
 
 \section{Preliminary Results}
 
+    %to do: write ipynb DOI
+    %fix bib
+    %state that the disk brightens by >10%
+    % summarize future plans
     
 \acknowledgments % equivalent to \section*{ACKNOWLEDGMENTS}   
 
