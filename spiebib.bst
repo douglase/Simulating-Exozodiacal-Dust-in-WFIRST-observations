@@ -53,6 +53,7 @@ ENTRY
     type
     volume
     year
+    doi
   }
   {}
   { label }
@@ -676,6 +677,7 @@ FUNCTION {article}
   if$
   new.block
   note output
+ doi 
   fin.entry
 }
 
