@@ -660,7 +660,12 @@ FUNCTION {format.incoll.inproc.crossref}
   if$
   " \cite{" * crossref * "}" *
 }
-
+FUNCTION {write.doi} 
+{ doi empty$
+    { "" }
+    { new.block "DOI: " doi * "" * }
+  if$ 
+}
 FUNCTION {article}
 { output.bibitem
   format.authors "author" output.check
@@ -677,8 +682,9 @@ FUNCTION {article}
   if$
   new.block
   note output
- doi 
-  fin.entry
+  blank.sep
+write.doi output 
+fin.entry
 }
 
 FUNCTION {book}
