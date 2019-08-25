@@ -8,15 +8,26 @@
 \usepackage{graphicx}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{glossaries}
+\usepackage{caption}
+
+\usepackage{subcaption}
 \title{Simulating the Effects of Exozodiacal Dust in WFIRST CGI observations}
 
 \author[a]{Ewan S. Douglas}
 \author[b]{John Debes}
 \author[a]{Kian Miliani}
+\author[b]{Bin Ren}
+\author[c]{Yinzi Xin}
+\author[c]{Kerri L. Cahoy}
+\author[d]{Nikole Lewis}
+\author[e]{Bruce Macintosh}
+
 \affil[a]{University of Arizona, Tucson, AZ, USA}
 \affil[b]{STScI, Baltimore, MD, USA}
-
-\authorinfo{Further author information: (Send correspondence to A.A.A.)\\A.A.A.: E-mail: aaa@tbk2.edu, Telephone: 1 505 123 1234\\  B.B.A.: E-mail: bba@cmp.com, Telephone: +33 (0)1 98 76 54 32}
+\affil[c]{MIT, Cambridge, MA, USA}
+\affil[d]{Cornell University,Ithaca, NY , USA}
+\affil[e]{Stanford University, Palo Alto, CA, USA}
+\authorinfo{Further author information: (Send correspondence to E.S.D.)\\E.S.D.: douglase (at) email.arizona.edu}
 
 % Option to view page numbers
 \pagestyle{empty} % change to \pagestyle{plain} for page numbers   
@@ -26,6 +37,9 @@
 \maketitle
 
 \begin{abstract}
+The WFIRST Coronagraph Instrument (CGI) will image the environment close to stars at orders of magnitude higher sensitivity than current observatories. In addition to directly imaging giant exoplanets,  WFIRST CGI has unprecedented sensitivity to scattered light from circumstellar dust.
+Most modeling has been confined to the dark-hole regime of the coronagraph (approximately 0.15 arcsec to  1 arcsec).
+This work uses publicly available field-dependent PSF models to model an exozodiacal disks within the 0.15 arcsec inner working angle. For simple Solar System-like test case, we find an approximately 25\% brightening of the exozodiacal flux transmitted by the coronagraph versus simply modeling the scattered light inside the dark hole. We also describe plans to accelerate and extend this modeling to a wider range of geometries and quantify the impact on post-processing. 
 
 \end{abstract}
 \input{acronyms}
@@ -49,7 +63,7 @@ Examples of the evolution of the \gls{HLC} PSF morphology and brightness as a fu
 
 
 
-\begin{figure}
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.51\textwidth]{0PSF.png}
     \includegraphics[width=0.49\textwidth]{17PSF_1lambdaD.png}
@@ -59,28 +73,33 @@ Examples of the evolution of the \gls{HLC} PSF morphology and brightness as a fu
     \caption{\acrshort{HLC} \gls{PSF} including transmission at a different separations. Top: On-axis coronagraph dark hole. Middle row: approx. 1 and 2$\lambda/D$ PSF. Significant flux is transmitted from sources inside the nominal 1.5$\lambda/D$ \acrshort{IWA}. Bottom row: approx. 3 and 4 $\lambda/D$ PSF. }
     \label{fig:psfs}
 \end{figure}
-\begin{figure}[htbp]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.95\textwidth]{flow.png}
-    \caption{Simulation flow for field dependant PSF simulations of debris disks.}
+    \caption{Simulation procedure for field dependant PSF simulations of circumstellar disks.}
     \label{fig:flow}
 \end{figure}
 
 
 
 
-\begin{figure}[htbp]
-    \includegraphics[width=0.95\textwidth]{Unknown-4.png}
-    \caption{Exozodiacal dust simulation assuming all dust is outside the \gls{IWA} }
-    \label{fig:nogap}
-    \end{figure}
-
-    \begin{figure}[htbp]
-
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.95\textwidth]{Unknown-7.png}
-    \caption{}
-    \label{fig:gap}
+    \caption{Exozodiacal dust simulations, using a Zodipic model of the solar system at 10 parsecs.
+    The input sampling (left-most figures) is 3 mas/pixel and given in Jansky/pixel. Masked pixels are shown as unity and propagated values are zero in the mask map (central figures). The HLC model outputs (right-most figure) is sampled at 5 mas/pixel and have not been rebinned to the detector pixel. }\label{fig:zodi_models}
+\begin{subfigure}{\textwidth}
+
+    \includegraphics[width=0.95\textwidth]{masked_zodi.png}
+    \caption{Exozodiacal dust simulation assuming all dust is outside the \gls{IWA} }
+    \label{fig:mask}
+    \end{subfigure}
+
+\begin{subfigure}{\textwidth}
+    \includegraphics[width=0.95\textwidth]{unmasked_zodi.png}
+    \caption{Including dust within the \acrshort{IWA} the disk brightens significantly, with the total flux transmitted increasing by approximately 25\%.}
+    \label{fig:nomask}
+    \end{subfigure}
+
 \end{figure}
 
 
@@ -91,18 +110,7 @@ We generate a simulated dust image in units of Jansky per pixel using Zodipic\ci
 Each pixel in the input scene is finely sampled, typically on a 3 mas grid.  
 We build a composite image by multiplying the flux in the input pixel by the corresponding PSF array.
 The PSF arrays are sampled from the 1D \gls{HLC} \gls{PSF} grid publicly shared on the IPAC WFIRST  website\footnote{http://wfirst.ipac.caltech.edu}.
-Rotational symmetry is assumed and interpolation is  nearest neighbor since the input grid is finely sampled (3 mas inside 4 $\lambda/D$).
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.51\textwidth]{0PSF.png}
-    \includegraphics[width=0.49\textwidth]{17PSF_1lambdaD.png}
-    \includegraphics[width=0.49\textwidth]{34PSF_2lambdaD.png}
-    \includegraphics[width=0.49\textwidth]{51PSF.png}
-    \includegraphics[width=0.49\textwidth]{68PSF.png}
-    \caption{\acrshort{HLC} \gls{PSF} including transmission at a different separations. Top: On-axis coronagraph dark hole. Middle row: approx. 1 and 2$\lambda/D$ PSF. Bottom row: approx. 3 and 4 $\lambda/D$ PSF.}
-    \label{fig:my_label}
-\end{figure}
+Rotational symmetry is assumed and interpolation is  nearest neighbor since the \gls{PSF} grid is finely sampled.
 
 \section{Preliminary Results}
 
@@ -110,7 +118,23 @@ Rotational symmetry is assumed and interpolation is  nearest neighbor since the 
     %fix bib
     %state that the disk brightens by >10%
     % summarize future plans
+    Fig. \ref{fig:zodi_models} shows the effect of including flux inside the \gls{IWA} on the simulated dust.
+    Fig. \ref{fig:mask} shows a the Zodipic Model truncated at approximately the \gls{CGI} \gls{IWA} (0.15 arcsec). The left panel shows the input flux used to simulate the image. The middle panel shows just the input pixels for clarity. 
+    The resulting simulated image, accounting for \gls{HLC} throughput and \gls{PSF} morphology is shown in the right panel.
+    Fig. \ref{fig:nomask} shows the same input model without an interior mask.
+    A \gls{PSF} was generated for every unmasked point (shown as zero values in the mask or colored values in the input map).    The  total transmitted increases from Fig. \ref{fig:mask} to Fig. \ref{fig:nomask} by about 25\%.
     
+    \section{Discussion}
+    This early work shows scattered light from circumstellar disks inside the \gls{IWA} may impact the flux levels at larger separations, inside the dark hole where the stellar leakage is small.
+    This provides an opportunity to better characterize exozodiacal dust and debris disks at small angular separations.
+    Additionally, since flux is diffracted to large separations, dust scattered light inside the \gls{WFIRST} CGI \gls{IWA} may increase the background flux observed
+    Particularly notable in Fig. \ref{fig:nomask}, for this circularly symmetric, face-on model,  is the brightening of the central point where the parent star will appear, which must be accounted for in flux calibration and \gls{PSF} subtraction.
+    Future work is necessary to quantify the impact on post-processing and assess sensitivity to dust as a function of stellar type and distance as well as disk morphology and composition.
+    
+    A Jupyter notebook reproducing Fig. \ref{fig:zodi_models} is available from Github\footnote{\url{https://github.com/uasal/2019_ProcSPIE_WFIRST_CGI_Exozodi}} and citable in Zenodo\cite{douglas_douglase/2019_procspie_wfirst_cgi_exozodi_2019}. 
+    The HLC PSF library is available from IPAC\footnote{\url{https://wfirst.ipac.caltech.edu/sims/off_axis_PSF.html}}.
+        The presented simulations are computation limited since each input pixel's PSF is interpolated and rotated to the correct field position. Work is underway to eliminate this bottleneck by generation of a pre-interpolated, high-resolution grid of PSF's which can be directly applied to an input field array.
+
 \acknowledgments % equivalent to \section*{ACKNOWLEDGMENTS}   
 
 
